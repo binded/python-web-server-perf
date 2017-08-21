@@ -18,7 +18,7 @@ install:
       mkdir wrk/bin;
       mv wrk/wrk wrk/bin;
     fi
-  - export PATH=$PATH:$PWD/wrk/bin/
+  - export PATH="$PATH:$PWD/wrk/bin/"
   - pip install -r requirements.txt
 script:
   - ./bench

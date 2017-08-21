@@ -32,7 +32,7 @@ wrk_health() {
   wrk \
     --threads 12 \
     --connections 400 \
-    --duration 5s \
+    --duration 10s \
     "${base_url}/health"
 }
 
