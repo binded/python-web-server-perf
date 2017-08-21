@@ -32,7 +32,7 @@ wrk_health() {
   wrk \
     --threads 12 \
     --connections 400 \
-    --duration 10s \
+    --duration 15s \
     "${base_url}/health"
 }
 
@@ -44,8 +44,8 @@ bench_server() {
   local base_url="http://localhost:${PORT}"
   local start_script="./start"
   pushd "./servers/${server_name}" > /dev/null
-  # "${start_script}" &
-  "${start_script}" > /dev/null 2>&1 &
+  "${start_script}" &
+  # "${start_script}" > /dev/null 2>&1 &
   local server_pid=$!
   popd > /dev/null
 
@@ -54,10 +54,10 @@ bench_server() {
   wait_for_server "${base_url}" # > /dev/null
 
   wrk_health "${base_url}"
-  # wrk_upload "${base_url}"
+  wrk_upload "${base_url}"
 
   # terminate server
-  pkill -P "${server_pid}" > /dev/null 2>&1
+  pkill -P "${server_pid}" # > /dev/null 2>&1
 }
 
 bench_server sanic

@@ -11,4 +11,9 @@ app = Flask(__name__)
 def health():
     return 'ok'
 
+@app.route('/upload', methods=['POST'])
+def upload():
+    # TODO: load the file in memory
+    return 'ok'
+
 app.run(threaded=True, port=int(os.getenv('PORT', 8080)))

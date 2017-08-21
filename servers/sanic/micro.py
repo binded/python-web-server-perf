@@ -1,8 +1,12 @@
 import os
+import logging
 from sanic import Sanic
 from sanic.response import json, text
 
 app = Sanic()
+
+logging.getLogger('network').setLevel(logging.ERROR)
+logging.getLogger('sanic').setLevel(logging.ERROR)
 
 @app.route('/')
 async def test(request):
@@ -10,6 +14,11 @@ async def test(request):
 
 @app.route('/health', methods=['GET'])
 async def health(request):
+    return text('ok')
+
+@app.route('/upload', methods=['POST'])
+def upload(request):
+    # TODO: load the file in memory
     return text('ok')
 
 if __name__ == '__main__':
