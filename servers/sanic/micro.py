@@ -14,5 +14,10 @@ async def health(request):
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 8080))
-    app.run(host='0.0.0.0', port=port, workers=1)
+    app.run(
+        host='0.0.0.0',
+        port=port,
+        workers=1,
+        debug=False
+    )
 
