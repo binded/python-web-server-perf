@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -eo pipefail
+trap 'kill -TERM -- -$$' SIGINT
+
+export PORT=${PORT:-8080}
+
+echo2() {
+  >&2 echo "$@"
+}
+
+wait_for_server() {
+  local url="${1}/health"
+  sleep 1
+  until curl --output /dev/null --silent --fail "${url}"; do
+    echo2 "."
+    sleep 1
+  done
+}
+
+wrk_upload() {
+  local url="${1}"
+  wrk \
+    --threads 12 \
+    --connections 36 \
+    --duration 15s \
+    --script upload.lua \
+    "${base_url}/upload"
+}
+
+wrk_health() {
+  local url="${1}"
+  wrk \
+    --threads 12 \
+    --connections 400 \
+    --duration 5s \
+    "${base_url}/health"
+}
+
+bench_server() {
+  local server_name=${1}
+  echo ""
+  echo "${server_name}"
+  echo "---"
+  local base_url="http://localhost:${PORT}"
+  local start_script="./start"
+  pushd "./servers/${server_name}" > /dev/null
+  # "${start_script}" &
+  "${start_script}" > /dev/null 2>&1 &
+  local server_pid=$!
+  popd > /dev/null
+
+  # Wait for server
+
+  wait_for_server "${base_url}" # > /dev/null
+
+  wrk_health "${base_url}"
+  # wrk_upload "${base_url}"
+
+  # terminate server
+  pkill -P "${server_pid}" > /dev/null 2>&1
+}
+
+bench_server sanic
+bench_server japronto
+bench_server werkzeug
