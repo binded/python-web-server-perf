@@ -1,10 +1,24 @@
 sudo: false
 language: python
+env:
+  global:
+    - WRK_VERSION=4.0.2
 cache:
   directories:
     - $HOME/.cache/pip
+    - wrk/bin
 python:
   - 3.6
-install: pip install -r requirements.txt
+install:
+  # install wrk
+  - if [ ! -f "wrk/bin/wrk" ]; then
+      rm -rf wrk;
+      git clone https://github.com/wg/wrk.git;
+      make -C wrk;
+      mkdir wrk/bin;
+      mv wrk/wrk wrk/bin;
+    fi
+  - export PATH=$PATH:$PWD/wrk/bin/
+  - pip install -r requirements.txt
 script:
   - ./bench
