@@ -11,4 +11,4 @@ app = Flask(__name__)
 def health():
     return 'ok'
 
-app.run(port=int(os.getenv('PORT', 8080)))
+app.run(threaded=True, port=int(os.getenv('PORT', 8080)))
